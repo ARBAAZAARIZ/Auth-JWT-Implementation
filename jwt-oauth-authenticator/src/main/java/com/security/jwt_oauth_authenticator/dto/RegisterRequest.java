@@ -1,0 +1,10 @@
+package com.security.jwt_oauth_authenticator.dto;
+
+import lombok.Data;
+
+@Data
+public class RegisterRequest {
+    private String username;
+    private String email;
+    private String password;
+}
