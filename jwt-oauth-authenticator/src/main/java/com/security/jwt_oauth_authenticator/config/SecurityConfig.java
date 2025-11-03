@@ -1,11 +1,15 @@
 package com.security.jwt_oauth_authenticator.config;
 
+import com.security.jwt_oauth_authenticator.filter.JwtAuthenticationFilter;
+import lombok.RequiredArgsConstructor;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 /**
  * Main security configuration class.
@@ -14,8 +18,12 @@ import org.springframework.security.web.SecurityFilterChain;
  */
 @Configuration
 @EnableWebSecurity  // This enables Spring Security's web security support
+@RequiredArgsConstructor
 public class SecurityConfig {
 
+    private final JwtAuthenticationFilter jwtAuthFilter;
+
+    @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception{
 
         // 1. Disable CSRF protection.
@@ -26,7 +34,9 @@ public class SecurityConfig {
         http.authorizeHttpRequests(authorize -> authorize
                 // --- This is where we define our PUBLIC endpoints ---
                 // We create a common path prefix "/api/auth" for all auth-related endpoints
-                .requestMatchers("api/auth/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+
+                .requestMatchers("/api/v1/demo").hasRole("USER")// Only users with ROLE_USER
                 // --- All other requests must be authenticated ---
                 .anyRequest().authenticated()
         );
@@ -50,6 +60,15 @@ public class SecurityConfig {
         // and PasswordEncoder to validate the Basic Auth credentials.
 
         http.httpBasic(httpBasic -> {}); // Uses default configuration
+
+        // --- NEW: Add the JwtAuthenticationFilter ---
+        // This is the most important line:
+        // We tell Spring Security to use our 'jwtAuthFilter'
+        // and to run it BEFORE the standard UsernamePasswordAuthenticationFilter.
+        // This ensures our token is checked *before* Spring tries to find a
+        // username/password.
+        http.addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         // Build and return the configured HttpSecurity object
         return http.build();

@@ -98,6 +98,8 @@ public class AuthenticationService {
                 )
         );
 
+        System.out.println(authentication);
+
         // 2. If authentication is successful, get the user
         // We can get the UserDetails from the Authentication object...
         // User user = (User) authentication.getPrincipal();
@@ -118,19 +120,21 @@ public class AuthenticationService {
      * Handles token refreshing.
      * This implements our "Token Rotation" strategy.
      */
+    // File: src/main/java/com.security.jwt_oauth_authenticator.service/AuthenticationService.java
+
     public LoginResponse refresh(RefreshTokenRequest request){
         String refreshToken = request.getRefreshToken();
 
-        // 1. Extract email from the (potentially expired) refresh token
-        String email = jwtService.extractUsername(refreshToken);
+        // 1. Extract the identifier (which is the username: "arbaaz")
+        String identifier = jwtService.extractUsername(refreshToken); // Changed variable name to 'identifier' for clarity
 
         // 2. Find the user in the database
-        User user = this.userRepository.findByEmail(email)
+        // YOU MUST CHANGE THIS LINE:
+        User user = this.userRepository.findByUsernameOrEmail(identifier, identifier) // <-- THIS IS THE CRITICAL FIX
                 .orElseThrow(() -> new UsernameNotFoundException("User not found from refresh token"));
 
         // 3. Validate the refresh token (check if it's expired, tampered, or not for this user)
         if (!jwtService.isTokenValid(refreshToken, user)) {
-            // This will be caught by our exception handler and result in a 401
             throw new SecurityException("Invalid Refresh Token");
         }
 

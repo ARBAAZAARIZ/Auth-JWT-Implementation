@@ -3,11 +3,16 @@ package com.security.jwt_oauth_authenticator.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Set;
 
-@Data
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
 public class Role {
 
     @Id

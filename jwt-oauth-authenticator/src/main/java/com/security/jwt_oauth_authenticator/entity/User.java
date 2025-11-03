@@ -3,6 +3,9 @@ package com.security.jwt_oauth_authenticator.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,7 +16,9 @@ import java.util.stream.Collectors;
 
 
 @Entity
-@Data
+@NoArgsConstructor
+@Getter
+@Setter
 public class User implements UserDetails {
 
     @Id
@@ -65,22 +70,21 @@ public class User implements UserDetails {
 
     @Override
     public boolean isAccountNonExpired() {
-        return true;
+        // Or you can just return true if account expiry is not a feature
+        return this.isActive;
     }
-
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return this.isActive;
     }
-
     @Override
     public boolean isCredentialsNonExpired() {
-        return true;
+        return this.isActive;
     }
-
     @Override
     public boolean isEnabled() {
-        return true;
+        // This is the most important one
+        return this.isActive;
     }
 
 

@@ -4,9 +4,14 @@ package com.security.jwt_oauth_authenticator.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
 @Entity
+@NoArgsConstructor
+@Getter
+@Setter
 public class UserRole {
 
     @Id
@@ -20,7 +25,7 @@ public class UserRole {
     private User user;
 
     // This is the "many" side for the Role
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // <-- ENSURE this is EAGER
     @JoinColumn(name = "RoleID", nullable = false)
     private Role role;
 

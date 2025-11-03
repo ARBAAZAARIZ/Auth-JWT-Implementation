@@ -2,9 +2,11 @@ package com.security.jwt_oauth_authenticator.repository;
 
 import com.security.jwt_oauth_authenticator.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
+@Repository
 public interface RoleRepository extends JpaRepository<Role, Integer> {
 
     // We'll need this when assigning a default "USER" role
