@@ -27,6 +27,6 @@ public class DemoController {
         // We can also get their roles (authorities)
                 String roles = authentication.getAuthorities().toString();
 
-        return ResponseEntity.ok("Hello" + username + "! Your token is valid. Your roles are:" + roles);
+        return ResponseEntity.ok("Hello " + username + "! Your token is valid. Your roles are:" + roles);
     }
 }
